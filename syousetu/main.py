@@ -3,7 +3,7 @@ from discord import channel
 
 from create_db import * 
 
-TOKEN = 'ODMwMzc1NDI4NDIxNzEzOTIw.YHFxYQ.1TPrdnim3_M6NMBt5DVrOY-R3vQ'
+TOKEN = ''
 CHANNEL_ID = [862209054830886943]
 GUILD_ID = 834289296725901332
 client = discord.Client()
