@@ -1,11 +1,8 @@
 import discord
-from discord import channel
+import datetime, asyncio
 
-from create_db import * 
-
-TOKEN = ''
-CHANNEL_ID = [862209054830886943]
-GUILD_ID = 834289296725901332
+TOKEN = 'ODMwMzc1NDI4NDIxNzEzOTIw.YHFxYQ.7TylfYM-3NY-NN9WdthzSU42AAo'
+CHANNEL_ID = [863471180945817640,863471268070162458,863148987522482188]
 client = discord.Client()
 channel_name = 'なろう更新'
 
@@ -20,33 +17,32 @@ async def create_channel(message):
         return new_channel
 
 @client.event
-async def greet():
+async def greet(dt_now):
         for i in CHANNEL_ID:
             channel = client.get_channel(i)
-            await channel.send('good mornig.')
+            await channel.send(dt_now.minute)
 
 @client.event
 async def on_ready():#起動時
     print('ncodebot get started.')
-    # await greet()
+    while True:
+        dt_now = datetime.datetime.now()
+        if dt_now.minute%5 == 0:
+            await greet(dt_now)
+        await asyncio.sleep(60)
 
 @client.event
 async def on_message(message):
     if message.author.bot:
         return
-    if client.user in message.mentions or message.content == '/mkch':
+    if client.user in message.mentions:
 #         try:
         new_channel = await create_channel(message)
             # チャンネルのリンクと作成メッセージを送信
         text = f'{new_channel.mention} を作成しました.'
         await message.channel.send(text)
-#         except:
-#             guild = client.get_guild(GUILD_ID)
-#             print(type(guild))
-#             new_channel = guild.get_channel(CHANNEL_ID)
-#             print(type(new_channel))
-#         finally:
         await new_channel.send('aaa\nbbb')
+
     if message.content == '/neko':
         await message.channel.send('にゃーん')
 
