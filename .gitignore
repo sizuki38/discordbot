@@ -1,2 +1,1 @@
-./syousetu/config
-./syousetu/__pycache__
+syousetu/__pycache__/*
