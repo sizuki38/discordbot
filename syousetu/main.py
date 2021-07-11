@@ -1,20 +1,10 @@
-import discord
-import datetime, asyncio
+from sub import *
+import discord, datetime, asyncio
 
-TOKEN = 'ODMwMzc1NDI4NDIxNzEzOTIw.YHFxYQ.7TylfYM-3NY-NN9WdthzSU42AAo'
+TOKEN = ''
 CHANNEL_ID = [863471180945817640,863471268070162458,863148987522482188]
 client = discord.Client()
 channel_name = 'なろう更新'
-
-# 発言したチャンネルのカテゴリ内にチャンネルを作成する非同期関数
-async def create_channel(message):
-    category_id = message.channel.category_id
-    category = message.guild.get_channel(category_id)
-    if channel_name in str(message.guild.text_channels):
-        return
-    else:
-        new_channel = await category.create_text_channel(name=channel_name)
-        return new_channel
 
 @client.event
 async def greet(dt_now):
@@ -43,7 +33,12 @@ async def on_message(message):
         await message.channel.send(text)
         await new_channel.send('aaa\nbbb')
 
-    if message.content == '/neko':
+    if message.content.startswith('/add'):
+        url = message.content.split()[1]
+        await crapy(url)
+
+
+    if message.content.startswith('/neko'):
         await message.channel.send('にゃーん')
 
 client.run(TOKEN)
