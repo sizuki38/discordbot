@@ -1,7 +1,10 @@
+from sqlalchemy.orm import session
 from bs4 import BeautifulSoup
 import urllib.request
+from create_db import engine
 
 base = 'https://ncode.syosetu.com/'
+channel_name = 'なろう更新'
 
 async def scrapy(ncode):
     if base in ncode:
@@ -21,6 +24,10 @@ async def create_channel(message):
     category = message.guild.get_channel(category_id)
     if channel_name in str(message.guild.text_channels):
         return
-    else:
-        new_channel = await category.create_text_channel(name=channel_name)
-        return new_channel
+    new_channel = await category.create_text_channel(name=channel_name)
+    # チャンネルのリンクと作成メッセージを送信
+    text = f'{new_channel.mention} を作成しました.'
+    await message.channel.send(text)
+    await new_channel.send('aaa\nbbb')
+
+
