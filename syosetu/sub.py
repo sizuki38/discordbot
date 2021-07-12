@@ -1,12 +1,12 @@
 from sqlalchemy.orm import session
 from bs4 import BeautifulSoup
 import urllib.request
-from create_db import engine
+from create_db import CreateNovel, engine
 
 base = 'https://ncode.syosetu.com/'
 channel_name = 'なろう更新'
 
-async def scrapy(ncode):
+def scrapy(ncode):
     if base in ncode:
         url = ncode
     else:
@@ -16,7 +16,8 @@ async def scrapy(ncode):
     html = urllib.request.urlopen(req)
     soup = BeautifulSoup(html,"html.parser")
     topicsindex = soup.find_all('dl', attrs={'class': 'novel_sublist2'})
-    return len(topicsindex)
+    text = CreateNovel(ncode, len(topicsindex))
+    return text
 
     # 発言したチャンネルのカテゴリ内にチャンネルを作成する非同期関数
 async def create_channel(message):

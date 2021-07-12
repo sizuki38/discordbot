@@ -1,8 +1,9 @@
+from sqlalchemy.sql.expression import text
 from create_db import *
 from sub import *
 import discord, datetime, asyncio
 
-TOKEN = ''
+TOKEN = 'ODMwMzc1NDI4NDIxNzEzOTIw.YHFxYQ.v5vVGD2vxWczuSPp1Ubg33uoeB4'
 CHANNEL_ID = [863471180945817640,863471268070162458,863148987522482188]
 client = discord.Client()
 
@@ -18,10 +19,11 @@ async def on_ready():#起動時
     while True:
         dt_now = datetime.datetime.now()
         if dt_now.minute%5 == 0:
-            novels = ReadNovel()
+            novels = ReadNovels()
             for novel in novels:
                 nos_now = scrapy(novel.ncode)
                 if nos_now > novel.nos:
+                    print (nos_now,novel.ncode)
                     UpdateNovel(novel, nos_now)
                     middles = ReadMiddleNovel(novel.id)
                     for middle in middles:
@@ -38,12 +40,19 @@ async def on_message(message):
         await create_channel(message)
     if message.content.startswith('/add'):
         try:
-            url = message.split()[1].split('/')[-1]
+            ncode = message.content.split('/add syosetu ')[1].split('/')[3]
         except:
-            await help()
+            await message.channel.send('error 1')
         else:
-            await scrapy(url)
-
+            print(ncode)
+            text = scrapy(ncode)
+            await message.channel.send(text)
+    if message.content.startswith('/read'):
+        channels = ReadChannels()
+        print(channels)
+        for channel in channels:
+            chmes = client.get_channel(channel.channel_id)
+            chmes.send('AAA')
     if message.content.startswith('/neko'):
         await message.channel.send('にゃーん')
 

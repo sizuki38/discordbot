@@ -2,12 +2,12 @@
 import sqlalchemy
 from sqlalchemy import Column, Integer, String
 from sqlalchemy.ext.declarative import declarative_base
-from sqlalchemy.orm import sessionmaker
+from sqlalchemy.orm import sessionmaker, scoped_session
 from sqlalchemy.sql.expression import true
 
 engine = sqlalchemy.create_engine('sqlite:///ncode.db', echo = True)
 Base = declarative_base()
-session = sessionmaker(bind=engine)
+session = scoped_session(sessionmaker(autocommit = False, autoflush = True, bind=engine))
 
 #----------------------
 class Novel(Base):
@@ -39,10 +39,16 @@ def CreateChannel(channel_id):
 	session.commit()
 def CreateNovel(ncode, nos):
 	novel=Novel()
-	novel.ncode=ncode
-	novel.nos=nos
-	session.add(instance=novel)
-	session.commit()
+	try:
+		novels = ReadNovel(ncode)
+	except:
+		novel.ncode=ncode
+		novel.nos=nos
+		session.add(instance=novel)
+		session.commit()
+		return 'add novel'
+	else:
+		return 'already exists'
 def CreateMiddle(novel_id, channel_id):
 	novelchannel = Middle()
 	novelchannel.novel_id=novel_id
@@ -50,14 +56,14 @@ def CreateMiddle(novel_id, channel_id):
 	session.add(instance=novelchannel)
 	session.commit()
 
-def ReadNovel():#all
+def ReadNovels():#all
 	return session.query(Novel).all()
 def ReadNovelID(id):#serch id
 	return session.query(Novel).filter(Novel.id==id).one()
 def ReadNovel(ncode):#serch ncode
 	return session.query(Novel).filter(Novel.ncode==ncode).one()
 
-def ReadChannel():#all
+def ReadChannels():#all
 	return session.query(Channel).all()
 def ReadChannelID(id):#serch id
 	return session.query(Channel).filter(Channel.id==id).one()
@@ -81,7 +87,7 @@ def DeleteChannel(channel_id):
 	session.delete(channel)
 	session.delete(middles)
 	session.commit()
-def DeleteChannel(ncode, channel_id):
+def DeleteMiddle(ncode, channel_id):
 	novel = ReadNovel(ncode)
 	channel = ReadChannel(channel_id)
 	middle = ReadMiddle(novel.id, channel.id)
