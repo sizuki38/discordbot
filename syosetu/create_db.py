@@ -14,6 +14,7 @@ class Novel(Base):
 	__tablename__ = 'novels'
 	id = Column(Integer, primary_key = True, autoincrement=True)
 	ncode = Column(String,unique = True)
+  name = Column(String)
 	nos = Column(Integer)
 
 class Middle(Base):
@@ -32,17 +33,20 @@ Base.metadata.create_all(bind = engine)
 #----------------------
 def CreateChannel(channel_id):
 	channel=Channel()
-	if channel.channel_id in channel_id:
-		return
-	channel.channel_id=channel_id
-	session.add(instance=channel)
-	session.commit()
-def CreateNovel(ncode, nos):
+  try:
+    ReadChannel(channel_id)
+  except:
+    channe.channel_id=channel_id
+  	session.add(instance=channel)
+  	session.commit()
+    return 'add channel'
+def CreateNovel(ncode, name, nos):
 	novel=Novel()
 	try:
 		novels = ReadNovel(ncode)
 	except:
 		novel.ncode=ncode
+    novel.name=name
 		novel.nos=nos
 		session.add(instance=novel)
 		session.commit()
@@ -50,11 +54,17 @@ def CreateNovel(ncode, nos):
 	else:
 		return 'already exists'
 def CreateMiddle(novel_id, channel_id):
-	novelchannel = Middle()
-	novelchannel.novel_id=novel_id
-	novelchannel.channel_id=channel_id
-	session.add(instance=novelchannel)
-	session.commit()
+  try:
+    ReadMiddle(novel_id,channel_id)
+  except:
+    middle = Middle()
+    middle.novel_id=novel_id
+    middle.channel_id=channel_id
+    session.add(instance=middle)
+    session.commit()
+    return 'registar novel'
+  else:
+    return 'already registar'
 
 def ReadNovels():#all
 	return session.query(Novel).all()
